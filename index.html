@@ -1,29 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TrackIQ</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LineTrack</title>
+
+    <style>
+        /* ----- Global Style ----- */
+        body {
+            margin: 0;
+            font-family: "Inter", sans-serif;
+            background: #0f1b2f;
+            color: white;
+            display: flex;
+        }
+
+        /* ----- Sidebar ----- */
+        .sidebar {
+            width: 260px;
+            background: #0a1422;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid #142238;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .menu-group {
+            margin-bottom: 25px;
+        }
+
+        .menu-title {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        details {
+            background: #121e33;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        summary {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .submenu-btn {
+            background: #18283f;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submenu-btn:hover {
+            background: #1f3456;
+        }
+
+        /* ----- Content ----- */
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        #output {
+            background: rgba(255,255,255,0.06);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 22px;
+            min-height: 80px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: #1d8cff;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #46a6ff;
+        }
+    </style>
 </head>
 
 <body>
-  <header>
-    <h1>TrackIQ</h1>
-    <p>Learn. Play. Master the Rail.</p>
-  </header>
 
-  <section id="fact">
-    <h2>Did you know?</h2>
-    <p id="fact-text">Loading a railway fact...</p>
-    <button onclick="loadFact()">New Fact</button>
-  </section>
+    <!-- ----- SIDEBAR ----- -->
+    <div class="sidebar">
+        <div class="logo">LineTrack</div>
 
-  <section id="quiz">
-    <h2>Quick Quiz</h2>
-    <p id="question">Loading question...</p>
-    <div id="answers"></div>
-  </section>
+        <div class="menu-group">
+            <div class="menu-title">Sections</div>
 
-  <script src="script.js"></script>
+            <details>
+                <summary>RailFacts</summary>
+                <div class="submenu-btn" onclick="newFact()">New Fact</div>
+            </details>
+
+            <details>
+                <summary>RailQuiz</summary>
+                <div class="submenu-btn" onclick="startQuiz()">Start Quiz</div>
+                <div class="submenu-btn" onclick="nextQuestion()">Next Question</div>
+            </details>
+        </div>
+    </div>
+
+    <!-- ----- MAIN CONTENT ----- -->
+    <div class="content">
+        <h1 id="title">Welcome to LineTrack</h1>
+        <p id="subtitle">Select a feature from the left menu.</p>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        /* ----- FACTS ----- */
+        const facts = [
+            "The first railway opened in 1825 between Stockton and Darlington.",
+            "The TGV set a world speed record of 574.8 km/h.",
+            "Japanese Shinkansen trains have a delay average under 1 minute.",
+            "London has the oldest underground system in the world.",
+            "Railway semaphores are still used in several countries."
+        ];
+
+        function newFact() {
+            const randomFact = facts[Math.floor(Math.random() * facts.length)];
+            document.getElementById("title").innerText = "RailFact";
+            document.getElementById("subtitle").innerText = "Random railway knowledge:";
+            document.getElementById("output").innerText = randomFact;
+        }
+
+        /* ----- QUIZ ----- */
+        const quizQuestions = [
+            { q: "What country invented the Shinkansen?", a: "Japan" },
+            { q: "What is the world’s fastest wheeled train?", a: "TGV" },
+            { q: "What year did the London Underground open?", a: "1863" },
+        ];
+
+        let quizIndex = 0;
+
+        function startQuiz() {
+            quizIndex = 0;
+            document.getElementById("title").innerText = "RailQuiz";
+            document.getElementById("subtitle").innerText = "Question 1:";
+            document.getElementById("output").innerText = quizQuestions[0].q;
+        }
+
+        function nextQuestion() {
+            quizIndex++;
+            if (quizIndex >= quizQuestions.length) {
+                document.getElementById("title").innerText = "Quiz Complete";
+                document.getElementById("subtitle").innerText = "";
+                document.getElementById("output").innerText = "You've reached the end!";
+            } else {
+                document.getElementById("title").innerText = "RailQuiz";
+                document.getElementById("subtitle").innerText = `Question ${quizIndex + 1}:`;
+                document.getElementById("output").innerText = quizQuestions[quizIndex].q;
+            }
+        }
+    </script>
+
 </body>
 </html>
