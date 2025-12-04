@@ -1,7 +1,6 @@
 /* =============================
-   DATA: 15 FACTS & 10 QUESTIONS
+   DATA: FACTS (15 items)
    ============================= */
-
 const facts = [
     "The first public railway opened in 1825 between Stockton and Darlington in the UK.",
     "The TGV set a world speed record of 574.8 km/h (357 mph) in 2007.",
@@ -20,27 +19,70 @@ const facts = [
     "The Seikan Tunnel in Japan has a 23.3 km section that is under the seabed."
 ];
 
-// Questions derived from the facts above
+/* =============================
+   DATA: QUIZ (Multiple Choice)
+   ============================= */
 const quizData = [
-    { q: "Which country opened the first public railway in 1825?", a: "uk" },
-    { q: "What is the name of the famous high-speed train in Japan?", a: "shinkansen" },
-    { q: "Which city has the oldest underground railway system?", a: "london" },
-    { q: "What is the longest railway line in the world?", a: "trans-siberian" },
-    { q: "The 'Mallard' holds the speed record for what type of train?", a: "steam" },
-    { q: "In which country is the world's longest rail tunnel (Gotthard Base)?", a: "switzerland" },
-    { q: "What technology does the Shanghai train use to float above tracks?", a: "maglev" },
-    { q: "Which New York station has the most platforms in the world?", a: "grand central" },
-    { q: "Who built the first steam locomotive in 1804?", a: "richard trevithick" },
-    { q: "What is the highest railway line in the world?", a: "qinghai-tibet" }
+    {
+        q: "Which country opened the first public railway in 1825?",
+        options: ["United Kingdom", "United States", "Germany", "France"],
+        correct: 0 // Index of the correct answer in 'options'
+    },
+    {
+        q: "What is the name of the famous high-speed train in Japan?",
+        options: ["TGV", "Shinkansen", "Maglev", "ICE"],
+        correct: 1
+    },
+    {
+        q: "Which city has the oldest underground railway system?",
+        options: ["New York", "Paris", "London", "Moscow"],
+        correct: 2
+    },
+    {
+        q: "What is the longest railway line in the world?",
+        options: ["Orient Express", "Trans-Siberian", "Amtrak Coast", "Indian Pacific"],
+        correct: 1
+    },
+    {
+        q: "The 'Mallard' holds the speed record for what type of train?",
+        options: ["Electric", "Diesel", "Steam", "Magnetic"],
+        correct: 2
+    },
+    {
+        q: "In which country is the world's longest rail tunnel (Gotthard Base)?",
+        options: ["Japan", "China", "Switzerland", "Norway"],
+        correct: 2
+    },
+    {
+        q: "What technology does the Shanghai train use to float above tracks?",
+        options: ["Air Cushion", "Maglev (Magnetic Levitation)", "Hydraulics", "Anti-Gravity"],
+        correct: 1
+    },
+    {
+        q: "Which station has the most platforms in the world?",
+        options: ["Shinjuku Station", "Grand Central Terminal", "Gare du Nord", "Waterloo"],
+        correct: 1
+    },
+    {
+        q: "Who built the first steam locomotive in 1804?",
+        options: ["James Watt", "George Stephenson", "Richard Trevithick", "Isambard Brunel"],
+        correct: 2
+    },
+    {
+        q: "What is the highest railway line in the world?",
+        options: ["Swiss Alps", "Qinghai-Tibet", "Rocky Mountaineer", "Andean Explorer"],
+        correct: 1
+    }
 ];
 
 /* =============================
    STATE MANAGEMENT
    ============================= */
 
-let factIndex = 0; // Tracks which fact we are on
+let factIndex = 0;
 let quizIndex = 0;
 let quizScore = 0;
+const POINTS_PER_Q = 100;
 
 // DOM Elements
 const titleEl = document.getElementById("main-title");
@@ -84,7 +126,6 @@ function renderHome() {
     titleEl.innerText = "Welcome Aboard";
     subEl.innerText = "Discover amazing engineering feats or test your knowledge.";
     
-    // TWO BUTTONS ADDED HERE
     dynamicArea.innerHTML = `
         <div class="btn-group">
             <button class="action-btn" onclick="initFacts()">
@@ -107,15 +148,12 @@ function initFacts() {
     titleEl.innerText = "Did You Know?";
     subEl.innerText = "Learn something new about railways.";
     
-    factIndex = 0; // Reset to first fact
+    factIndex = 0;
     showFact();
 }
 
 function showFact() {
-    // Check if we reached the end
-    if (factIndex >= facts.length) {
-        factIndex = 0; // Loop back to start (optional)
-    }
+    if (factIndex >= facts.length) factIndex = 0;
 
     const currentFact = facts[factIndex];
     const counterText = `Fact ${factIndex + 1} / ${facts.length}`;
@@ -134,7 +172,6 @@ function showFact() {
 
 function nextFact() {
     factIndex++;
-    // If at end, loop back to 0
     if (factIndex >= facts.length) factIndex = 0;
     showFact();
 }
@@ -147,7 +184,7 @@ function prevFact() {
 }
 
 /* =============================
-   QUIZ LOGIC
+   MULTIPLE CHOICE QUIZ LOGIC
    ============================= */
 
 function initQuiz() {
@@ -159,6 +196,7 @@ function initQuiz() {
 }
 
 function renderQuestion() {
+    // End of Quiz Check
     if (quizIndex >= quizData.length) {
         showQuizResults();
         return;
@@ -169,41 +207,48 @@ function renderQuestion() {
     titleEl.innerText = `Question ${quizIndex + 1}`;
     subEl.innerText = currentQ.q;
 
-    dynamicArea.innerHTML = `
-        <input type="text" id="userAnswer" placeholder="Type answer here..." autocomplete="off">
-        <br>
-        <button class="action-btn" onclick="checkAnswer()">Submit Answer</button>
-    `;
-
-    // Allow pressing "Enter"
-    const inputField = document.getElementById("userAnswer");
-    inputField.focus();
-    inputField.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            checkAnswer();
-        }
+    // Create Options HTML
+    let optionsHTML = '<div class="quiz-options">';
+    
+    currentQ.options.forEach((option, index) => {
+        optionsHTML += `
+            <button class="option-btn" onclick="checkAnswer(${index}, this)">
+                ${option}
+            </button>
+        `;
     });
+    optionsHTML += '</div>';
+
+    // Inject HTML
+    dynamicArea.innerHTML = `
+        <div class="score-badge">Points: ${quizScore}</div>
+        ${optionsHTML}
+        <div id="next-btn-container"></div>
+    `;
 }
 
-function checkAnswer() {
-    const input = document.getElementById("userAnswer");
-    const userVal = input.value.trim().toLowerCase();
-    const correctVal = quizData[quizIndex].a;
+function checkAnswer(selectedIndex, btnElement) {
+    const currentQ = quizData[quizIndex];
+    const allButtons = document.querySelectorAll('.option-btn');
     
-    let feedbackHTML = "";
-    let isCorrect = false;
+    // Disable all buttons to prevent double clicking
+    allButtons.forEach(btn => btn.disabled = true);
 
-    // We allow small flexibility (e.g. if answer is "uk" and they type "the uk")
-    if (userVal === correctVal || userVal.includes(correctVal)) {
-        quizScore++;
-        isCorrect = true;
-        feedbackHTML = `<div class="feedback-msg correct"><i class="fa-solid fa-check"></i> Correct!</div>`;
+    // Check if correct
+    if (selectedIndex === currentQ.correct) {
+        btnElement.classList.add('correct');
+        quizScore += POINTS_PER_Q;
     } else {
-        feedbackHTML = `<div class="feedback-msg wrong"><i class="fa-solid fa-xmark"></i> Incorrect. The answer was "${correctVal.toUpperCase()}".</div>`;
+        btnElement.classList.add('wrong');
+        // Highlight the correct one so they learn
+        allButtons[currentQ.correct].classList.add('correct');
     }
 
-    dynamicArea.innerHTML = `
-        ${feedbackHTML}
+    // Update Score UI immediately
+    document.querySelector('.score-badge').innerText = `Points: ${quizScore}`;
+
+    // Show Next Button
+    document.getElementById('next-btn-container').innerHTML = `
         <button class="action-btn" onclick="nextQuestion()">Next Question</button>
     `;
 }
@@ -215,17 +260,22 @@ function nextQuestion() {
 
 function showQuizResults() {
     titleEl.innerText = "Quiz Complete!";
-    subEl.innerText = `You scored ${quizScore} out of ${quizData.length}`;
+    subEl.innerText = `Final Score: ${quizScore} Points`;
     
+    const maxScore = quizData.length * POINTS_PER_Q;
     let msg = "";
-    if (quizScore === quizData.length) msg = "Perfect! You're a Rail Master! 🚆";
-    else if (quizScore > quizData.length / 2) msg = "Great job! You know your trains.";
-    else msg = "Good effort! Read the Facts section and try again.";
+
+    if (quizScore === maxScore) msg = "🏆 Perfect Score! You are a Grand Engineer!";
+    else if (quizScore >= maxScore * 0.7) msg = "🚅 Excellent! You know your tracks.";
+    else msg = "🚋 Good effort! Check the Facts section to improve.";
     
     dynamicArea.innerHTML = `
+        <div style="font-size: 3rem; color: #06b6d4; margin-bottom: 10px;">
+            <i class="fa-solid fa-trophy"></i>
+        </div>
         <div style="margin-bottom: 25px; font-weight:500; font-size: 1.2rem;">${msg}</div>
         <div class="btn-group">
-            <button class="action-btn" onclick="initQuiz()">Restart Quiz</button>
+            <button class="action-btn" onclick="initQuiz()">Play Again</button>
             <button class="action-btn secondary" onclick="initFacts()">Study Facts</button>
         </div>
     `;
