@@ -4,9 +4,10 @@
     --sidebar-bg: #1e293b;
     --accent: #06b6d4; /* Cyan */
     --accent-hover: #0891b2;
+    --secondary: #64748b;
     --text-main: #f1f5f9;
     --text-muted: #94a3b8;
-    --glass: rgba(30, 41, 59, 0.7);
+    --glass: rgba(30, 41, 59, 0.75);
     --border: rgba(255, 255, 255, 0.1);
 }
 
@@ -21,7 +22,7 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-main);
     height: 100vh;
-    overflow: hidden; /* Prevents scroll on desktop */
+    overflow: hidden;
 }
 
 /* ----- Layout ----- */
@@ -104,10 +105,10 @@ body {
 /* ----- Glass Card ----- */
 .glass-card {
     background: var(--glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     width: 100%;
-    max-width: 600px;
+    max-width: 650px;
     padding: 50px;
     border-radius: 20px;
     border: 1px solid var(--border);
@@ -117,7 +118,7 @@ body {
 }
 
 .card-icon {
-    font-size: 40px;
+    font-size: 45px;
     color: var(--accent);
     margin-bottom: 20px;
 }
@@ -135,6 +136,13 @@ h1 {
 }
 
 /* ----- Interactive Elements ----- */
+.btn-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 .action-btn {
     background: var(--accent);
     color: white;
@@ -152,7 +160,18 @@ h1 {
     transform: translateY(-2px);
 }
 
-/* Quiz Specifics */
+.action-btn.secondary {
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+}
+
+.action-btn.secondary:hover {
+    background: var(--accent);
+    color: white;
+}
+
+/* Quiz & Facts Specifics */
 input[type="text"] {
     width: 80%;
     padding: 15px;
@@ -168,6 +187,16 @@ input[type="text"] {
 
 input[type="text"]:focus {
     border-color: var(--accent);
+}
+
+.fact-counter {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .feedback-msg {
@@ -193,7 +222,6 @@ input[type="text"]:focus {
     }
     .sidebar {
         width: 100%;
-        height: auto;
         padding: 15px;
         flex-direction: row;
         justify-content: space-between;
@@ -207,9 +235,9 @@ input[type="text"]:focus {
         display: none;
     }
     .menu-btn span {
-        display: none; /* Hide text on mobile, keep icons */
+        display: none; 
     }
     .glass-card {
-        padding: 30px;
+        padding: 30px 20px;
     }
 }
