@@ -258,15 +258,16 @@ h1 {
    ============================= */
 .credits {
     position: fixed;
-    bottom: 20px;
-    right: 25px;
+    bottom: 25px;
+    right: 30px;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column; /* Stacks text on top of logo */
+    align-items: flex-end;  /* Aligns everything to the right edge */
+    gap: 0px;               /* Removes gap so text sits tight on logo */
     z-index: 1000;
     opacity: 0.8;
+    pointer-events: none;
     transition: opacity 0.3s;
-    pointer-events: none; /* Prevents blocking clicks if overlaying */
 }
 
 .credits:hover {
@@ -274,18 +275,35 @@ h1 {
 }
 
 .credits span {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 500;
+    font-size: 10px;        /* Made smaller */
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-right: 2px;      /* Aligns slightly with the logo edge */
 }
 
 .credits img {
-    height: 28px; /* Adjust based on your preference */
+    height: 60px;           /* Made BIGGER (was 28px) */
     width: auto;
     display: block;
+    margin-top: 5px;
 }
+
+/* Mobile Adjustment */
+@media (max-width: 768px) {
+    .credits {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .credits span {
+        font-size: 9px;
+    }
+    
+    .credits img {
+        height: 40px; /* Smaller on mobile, but still visible */
+    }
 
 /* =============================
    7. ANIMATIONS & RESPONSIVE
