@@ -1,5 +1,5 @@
 /* =============================
-   1. VARIABLES & RESET
+   1. VARIABLES & RESET (GLOBAL)
    ============================= */
 :root {
     --bg-dark: #0f172a;
@@ -10,8 +10,8 @@
     --text-muted: #94a3b8;
     --glass: rgba(30, 41, 59, 0.85);
     --border: rgba(255, 255, 255, 0.1);
-    --correct: #22c55e; /* Green */
-    --wrong: #ef4444;   /* Red */
+    --correct: #22c55e;
+    --wrong: #ef4444;
 }
 
 * {
@@ -25,18 +25,18 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-main);
     height: 100vh;
-    overflow: hidden; /* Prevents scrolling on desktop */
+    overflow: hidden; /* Pas de scroll sur la page entière (géré par zones) */
 }
 
 /* =============================
-   2. MAIN LAYOUT
+   2. LAYOUT PRINCIPAL (VERSION PC)
    ============================= */
 .app-container {
     display: flex;
     height: 100%;
 }
 
-/* ----- Sidebar ----- */
+/* ----- Sidebar (Gauche) ----- */
 .sidebar {
     width: 260px;
     background-color: var(--sidebar-bg);
@@ -44,6 +44,7 @@ body {
     flex-direction: column;
     padding: 30px 20px;
     border-right: 1px solid var(--border);
+    flex-shrink: 0; /* Empêche de rétrécir */
 }
 
 .logo {
@@ -97,7 +98,7 @@ body {
     text-align: center;
 }
 
-/* ----- Content Area ----- */
+/* ----- Zone de Contenu (Droite) ----- */
 .content {
     flex: 1;
     display: flex;
@@ -106,10 +107,11 @@ body {
     background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 60%);
     padding: 20px;
     position: relative;
+    overflow-y: auto; /* Permet le scroll si le contenu est trop grand */
 }
 
 /* =============================
-   3. GLASS CARD COMPONENT
+   3. DESIGN DES CARTES (GLASSMORPHISM)
    ============================= */
 .glass-card {
     background: var(--glass);
@@ -131,20 +133,11 @@ body {
     margin-bottom: 15px;
 }
 
-h1 {
-    font-size: 2.2rem;
-    margin-bottom: 10px;
-}
-
-#sub-title {
-    color: var(--text-muted);
-    font-size: 1rem;
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
+h1 { font-size: 2.2rem; margin-bottom: 10px; }
+#sub-title { color: var(--text-muted); font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
 
 /* =============================
-   4. INTERACTIVE ELEMENTS
+   4. ELEMENTS INTERACTIFS
    ============================= */
 .btn-group {
     display: flex;
@@ -166,10 +159,7 @@ h1 {
     transition: 0.3s;
 }
 
-.action-btn:hover {
-    background: var(--accent-hover);
-    transform: translateY(-2px);
-}
+.action-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
 .action-btn.secondary {
     background: transparent;
@@ -177,12 +167,8 @@ h1 {
     color: var(--accent);
 }
 
-.action-btn.secondary:hover {
-    background: var(--accent);
-    color: white;
-}
+.action-btn.secondary:hover { background: var(--accent); color: white; }
 
-/* Fact Counter Text */
 .fact-counter {
     display: block;
     font-size: 0.9rem;
@@ -194,10 +180,8 @@ h1 {
 }
 
 /* =============================
-   5. QUIZ STYLES (MULTIPLE CHOICE)
+   5. STYLE DU QUIZ
    ============================= */
-
-/* Score Badge */
 .score-badge {
     background: rgba(255, 255, 255, 0.1);
     padding: 8px 15px;
@@ -209,7 +193,6 @@ h1 {
     display: inline-block;
 }
 
-/* Grid Layout for Questions */
 .quiz-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -217,7 +200,6 @@ h1 {
     margin-bottom: 25px;
 }
 
-/* Option Buttons */
 .option-btn {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border);
@@ -230,54 +212,23 @@ h1 {
     font-family: inherit;
 }
 
-.option-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent);
-}
-
-.option-btn:disabled {
-    cursor: default;
-}
-
-/* Feedback States */
-.option-btn.correct {
-    background: var(--correct) !important;
-    border-color: var(--correct);
-    color: #000;
-    font-weight: 600;
-}
-
-.option-btn.wrong {
-    background: var(--wrong) !important;
-    border-color: var(--wrong);
-    opacity: 0.7;
-}
+.option-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--accent); }
+.option-btn.correct { background: var(--correct) !important; border-color: var(--correct); color: #000; font-weight: 600; }
+.option-btn.wrong { background: var(--wrong) !important; border-color: var(--wrong); opacity: 0.7; }
 
 /* =============================
-   6. NEWS / BLOG SECTION
+   6. NEWS SECTION
    ============================= */
-
-/* Container for scrollable news */
 .news-container {
     text-align: left;
     max-height: 400px;
     overflow-y: auto;
     padding-right: 10px;
 }
+.news-container::-webkit-scrollbar { width: 6px; }
+.news-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+.news-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-/* Custom Scrollbar */
-.news-container::-webkit-scrollbar {
-    width: 6px;
-}
-.news-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-}
-.news-container::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 10px;
-}
-
-/* News Card */
 .news-card {
     background: rgba(0, 0, 0, 0.25);
     border: 1px solid var(--border);
@@ -287,136 +238,111 @@ h1 {
     transition: transform 0.2s;
 }
 
-.news-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--accent);
-    transform: translateX(5px);
-}
-
-.news-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.news-tag {
-    background: var(--accent);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.news-date {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.news-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--text-main);
-}
-
-.news-excerpt {
-    font-size: 0.95rem;
-    color: #cbd5e1;
-    line-height: 1.5;
-}
+.news-card:hover { border-color: var(--accent); transform: translateX(5px); }
+.news-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.news-tag { background: var(--accent); color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; }
+.news-date { font-size: 0.85rem; color: var(--text-muted); }
+.news-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+.news-excerpt { font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; }
 
 /* =============================
-   7. CREDITS / LOGO (BOTTOM RIGHT)
+   7. LOGO / CREDITS
    ============================= */
 .credits {
     position: fixed;
     bottom: 25px;
     right: 30px;
     display: flex;
-    flex-direction: column; /* Stacks text on top of logo */
-    align-items: flex-end;  /* Aligns everything to the right edge */
-    gap: 0px;               
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0px;
     z-index: 1000;
     opacity: 0.8;
     pointer-events: none;
     transition: opacity 0.3s;
 }
 
-.credits:hover {
-    opacity: 1;
-}
+.credits:hover { opacity: 1; }
+.credits span { font-size: 10px; color: rgba(255, 255, 255, 0.5); font-weight: 400; text-transform: uppercase; letter-spacing: 1px; margin-right: 2px; }
+.credits img { height: 60px; width: auto; display: block; margin-top: 5px; }
 
-.credits span {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-right: 2px;
-}
-
-.credits img {
-    height: 60px; /* Big logo */
-    width: auto;
-    display: block;
-    margin-top: 5px;
-}
-
-/* =============================
-   8. ANIMATIONS & RESPONSIVE
-   ============================= */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* =================================================================
+   9. OPTIMISATION MOBILE (S'active UNIQUEMENT sur petit écran)
+   ================================================================= */
 @media (max-width: 768px) {
+    
+    /* Layout Vertical */
     .app-container {
         flex-direction: column;
-        overflow-y: auto;
+        height: 100vh;
+        overflow: hidden;
     }
 
+    /* Navbar Horizontale en haut */
     .sidebar {
         width: 100%;
         height: auto;
-        padding: 15px;
+        min-height: 60px;
+        padding: 10px 15px;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        background: var(--sidebar-bg);
+        z-index: 100;
     }
 
-    .menu {
-        flex-direction: row;
-        gap: 5px;
-    }
+    /* Logo Mobile */
+    .logo { font-size: 18px; margin-bottom: 0; margin-right: 10px; }
+    .logo span { display: none; } /* Cache le texte "LineTrack" */
 
-    .menu-btn span, 
-    .logo span, 
-    .footer-note {
-        display: none;
+    /* Menu Mobile */
+    .menu { flex-direction: row; gap: 5px; flex: 1; justify-content: flex-end; }
+
+    /* Boutons Ronds */
+    .menu-btn {
+        padding: 10px;
+        font-size: 18px;
+        border-radius: 50%;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+    }
+    .menu-btn span { display: none; } /* Cache le texte des boutons */
+    .footer-note { display: none; }
+
+    /* Contenu Mobile */
+    .content {
+        padding: 15px;
+        align-items: flex-start;
+        padding-bottom: 80px; /* Espace pour le scroll */
     }
 
     .glass-card {
-        padding: 30px 20px;
+        padding: 25px 20px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+        max-width: 100%;
     }
 
-    .quiz-options {
-        grid-template-columns: 1fr;
-    }
+    h1 { font-size: 1.8rem; }
+    
+    /* Quiz empilé */
+    .quiz-options { grid-template-columns: 1fr; gap: 10px; }
+    .option-btn { padding: 15px; font-size: 0.95rem; }
 
-    .credits {
-        bottom: 15px;
-        right: 15px;
-    }
-
-    .credits span {
-        font-size: 9px;
-    }
-
-    .credits img {
-        height: 40px;
-    }
+    /* Logo Credits Mobile */
+    .credits { bottom: 10px; right: 10px; opacity: 0.6; }
+    .credits span { font-size: 8px; }
+    .credits img { height: 35px; }
+    
+    /* Boutons Larges */
+    .action-btn { width: 100%; margin-bottom: 10px; }
+    .btn-group { flex-direction: column; gap: 10px; width: 100%; }
 }
