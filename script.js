@@ -1,7 +1,8 @@
-/* =============================
-   1. DATA (FACTS, QUIZ, NEWS)
-   ============================= */
+/* =========================================================
+   1. DATA DATASETS (DATA)
+   ========================================================= */
 
+/* --- FACTS --- */
 const facts = [
     "The first public railway opened in 1825 between Stockton and Darlington in the UK.",
     "The TGV set a world speed record of 574.8 km/h (357 mph) in 2007.",
@@ -20,6 +21,7 @@ const facts = [
     "The Seikan Tunnel in Japan has a 23.3 km section that is under the seabed."
 ];
 
+/* --- QUIZ --- */
 const quizData = [
     { q: "Which country opened the first public railway in 1825?", options: ["United Kingdom", "United States", "Germany", "France"], correct: 0 },
     { q: "What is the name of the famous high-speed train in Japan?", options: ["TGV", "Shinkansen", "Maglev", "ICE"], correct: 1 },
@@ -33,6 +35,7 @@ const quizData = [
     { q: "What is the highest railway line in the world?", options: ["Swiss Alps", "Qinghai-Tibet", "Rocky Mountaineer", "Andean Explorer"], correct: 1 }
 ];
 
+/* --- NEWS --- */
 const newsData = [
     { category: "Innovation", date: "Dec 05, 2025", title: "Hydrogen Trains Expand in Europe", content: "Germany and Italy are leading the way with new Coradia iLint trains that emit only water vapor." },
     { category: "High Speed", date: "Nov 28, 2025", title: "New Speed Record Attempt Planned", content: "Engineers are preparing a modified Maglev prototype hoping to break the 603 km/h barrier next month in Japan." },
@@ -40,16 +43,24 @@ const newsData = [
     { category: "Infrastructure", date: "Oct 30, 2025", title: "Night Trains Make a Comeback", content: "New sleeper services connecting Paris, Berlin, and Vienna have sold out in record time as travelers ditch planes for trains." }
 ];
 
-/* =============================
-   2. STATE MANAGEMENT
-   ============================= */
+/* =========================================================
+   2. STATE MANAGEMENT & DOM
+   ========================================================= */
 let factIndex = 0;
 let quizIndex = 0;
 let quizScore = 0;
 const POINTS_PER_Q = 100;
 
-// Game State
-let gameState = { signal: 'red', switch: 'top', trainMoving: false, trainX: 20 };
+// Game State Variables
+let currentLevel = 1;
+let gameState = { 
+    signal: 'red', 
+    switch1: 'top', 
+    switch2: 'top', // For Level 2
+    trainMoving: false, 
+    trainX: 20 
+};
+let gameInterval = null;
 
 // DOM Elements
 const titleEl = document.getElementById("main-title");
@@ -57,27 +68,33 @@ const subEl = document.getElementById("sub-title");
 const dynamicArea = document.getElementById("dynamic-area");
 const cardIcon = document.querySelector(".card-icon i");
 
+// Démarrage
 renderHome();
 
-/* =============================
-   3. NAVIGATION
-   ============================= */
-document.getElementById('btn-home').addEventListener('click', () => { setActiveMenu('btn-home'); renderHome(); });
-document.getElementById('btn-fact').addEventListener('click', () => { setActiveMenu('btn-fact'); initFacts(); });
-document.getElementById('btn-quiz').addEventListener('click', () => { setActiveMenu('btn-quiz'); initQuiz(); });
-document.getElementById('btn-news').addEventListener('click', () => { setActiveMenu('btn-news'); initNews(); });
-document.getElementById('btn-game').addEventListener('click', () => { setActiveMenu('btn-game'); initGame(); });
-
-function setActiveMenu(id) {
-    document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+/* =========================================================
+   3. NAVIGATION HANDLERS
+   ========================================================= */
+function attachMenuEvent(id, action) {
+    const btn = document.getElementById(id);
+    if (btn) {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (gameInterval) clearInterval(gameInterval);
+            action();
+        });
+    }
 }
 
-/* =============================
-   4. SECTIONS LOGIC
-   ============================= */
+attachMenuEvent('btn-home', renderHome);
+attachMenuEvent('btn-fact', initFacts);
+attachMenuEvent('btn-quiz', initQuiz);
+attachMenuEvent('btn-news', initNews);
+attachMenuEvent('btn-game', () => { currentLevel = 1; initGame(); });
 
-/* --- HOME --- */
+/* =========================================================
+   4. HOME LOGIC
+   ========================================================= */
 function renderHome() {
     cardIcon.className = "fa-solid fa-train";
     titleEl.innerText = "Welcome Aboard";
@@ -90,7 +107,9 @@ function renderHome() {
     `;
 }
 
-/* --- FACTS --- */
+/* =========================================================
+   5. FACTS LOGIC
+   ========================================================= */
 function initFacts() {
     cardIcon.className = "fa-solid fa-lightbulb";
     titleEl.innerText = "Did You Know?";
@@ -102,9 +121,8 @@ function initFacts() {
 function showFact() {
     if (factIndex >= facts.length) factIndex = 0;
     const currentFact = facts[factIndex];
-    const counterText = `Fact ${factIndex + 1} / ${facts.length}`;
     dynamicArea.innerHTML = `
-        <span class="fact-counter">${counterText}</span>
+        <span class="fact-counter">Fact ${factIndex + 1} / ${facts.length}</span>
         <div style="font-size: 1.3rem; margin-bottom: 30px; min-height: 80px; display:flex; align-items:center; justify-content:center;">"${currentFact}"</div>
         <div class="btn-group">
             <button class="action-btn secondary" onclick="prevFact()" ${factIndex === 0 ? 'disabled' : ''}>Previous</button>
@@ -115,7 +133,9 @@ function showFact() {
 function nextFact() { factIndex++; if (factIndex >= facts.length) factIndex = 0; showFact(); }
 function prevFact() { if (factIndex > 0) { factIndex--; showFact(); } }
 
-/* --- QUIZ --- */
+/* =========================================================
+   6. QUIZ LOGIC
+   ========================================================= */
 function initQuiz() {
     quizIndex = 0; quizScore = 0;
     cardIcon.className = "fa-solid fa-circle-question";
@@ -127,13 +147,11 @@ function renderQuestion() {
     const currentQ = quizData[quizIndex];
     titleEl.innerText = `Question ${quizIndex + 1}`;
     subEl.innerText = currentQ.q;
-
     let optionsHTML = '<div class="quiz-options">';
     currentQ.options.forEach((option, index) => {
         optionsHTML += `<button class="option-btn" onclick="checkAnswer(${index}, this)">${option}</button>`;
     });
     optionsHTML += '</div>';
-
     dynamicArea.innerHTML = `<div class="score-badge">Points: ${quizScore}</div>${optionsHTML}<div id="next-btn-container"></div>`;
 }
 
@@ -141,7 +159,6 @@ function checkAnswer(selectedIndex, btnElement) {
     const currentQ = quizData[quizIndex];
     const allButtons = document.querySelectorAll('.option-btn');
     allButtons.forEach(btn => btn.disabled = true);
-
     if (selectedIndex === currentQ.correct) {
         btnElement.classList.add('correct');
         quizScore += POINTS_PER_Q;
@@ -162,7 +179,9 @@ function showQuizResults() {
     `;
 }
 
-/* --- NEWS --- */
+/* =========================================================
+   7. NEWS LOGIC
+   ========================================================= */
 function initNews() {
     cardIcon.className = "fa-solid fa-newspaper";
     titleEl.innerText = "Rail News";
@@ -179,98 +198,292 @@ function initNews() {
     dynamicArea.innerHTML = htmlContent;
 }
 
-/* --- GAME (SIGNAL SIM) --- */
+/* =========================================================
+   8. GAME LOGIC (LEVELS + ROTATION)
+   ========================================================= */
+
 function initGame() {
     cardIcon.className = "fa-solid fa-traffic-light";
-    titleEl.innerText = "Signal Simulator";
-    subEl.innerText = "Mission: Guide the train to Track 2 safely.";
+    titleEl.innerText = `Signal Simulator - Level ${currentLevel}`;
+    
+    // Reset State
+    gameState = { signal: 'red', switch1: 'top', switch2: 'top', trainMoving: false };
+    if (gameInterval) clearInterval(gameInterval);
 
+    if (currentLevel === 1) {
+        subEl.innerText = "Mission: Guide the train to TRACK 2 (Bottom).";
+        renderLevel1();
+    } else {
+        subEl.innerText = "Mission: Avoid the Dead End. Reach TRACK 3 (Bottom).";
+        renderLevel2();
+    }
+}
+
+function renderLevel1() {
     dynamicArea.innerHTML = `
-        <div class="status-text" id="game-status">SYSTEM READY. WAITING FOR COMMAND.</div>
+        <div class="status-text" id="game-status">LEVEL 1: READY.</div>
         <div class="game-board" id="board">
             <svg width="100%" height="100%" viewBox="0 0 600 300">
+                <!-- Tracks -->
                 <line x1="0" y1="150" x2="200" y2="150" class="track-line" />
                 <line x1="200" y1="150" x2="600" y2="100" class="track-line" opacity="0.5" />
-                <text x="550" y="90" fill="#555" font-family="monospace" font-size="12">TRACK 1</text>
+                <text x="540" y="90" fill="#555" font-family="monospace" font-size="12">TRACK 1</text>
                 <line x1="200" y1="150" x2="600" y2="200" class="track-line" opacity="0.5" />
-                <text x="550" y="230" fill="#555" font-family="monospace" font-size="12">TRACK 2</text>
-                <line id="game-switch" x1="200" y1="150" x2="300" y2="135" class="switch-line" onclick="toggleSwitch()" />
+                <text x="540" y="230" fill="#555" font-family="monospace" font-size="12">TRACK 2</text>
+
+                <!-- Switch 1 -->
+                <line id="sw1" x1="200" y1="150" x2="300" y2="135" class="switch-line" onclick="toggleSwitch(1)" />
+
+                <!-- Signal -->
                 <line x1="180" y1="120" x2="180" y2="150" stroke="#333" stroke-width="2" />
-                <circle id="game-signal" cx="180" cy="120" r="8" fill="#ef4444" class="signal-light" onclick="toggleSignal()" />
+                <circle id="sig" cx="180" cy="120" r="8" fill="#ef4444" class="signal-light" onclick="toggleSignal()" />
+
+                <!-- Train -->
                 <rect id="game-train" x="20" y="144" width="40" height="12" rx="2" fill="white" />
             </svg>
         </div>
-        <div class="game-controls"><button class="action-btn" onclick="startTrain()">START TRAIN</button><button class="action-btn secondary" onclick="initGame()">RESET</button></div>
-        <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 15px;"><i class="fa-solid fa-computer-mouse"></i> Click the <b>Blue Line</b> (Switch) and the <b>Red Light</b> (Signal).</div>
+        <div class="game-controls">
+            <button class="action-btn" onclick="startTrainLvl1()">START TRAIN</button>
+            <button class="action-btn secondary" onclick="initGame()">RESET</button>
+        </div>
+        <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 15px;">Click Blue Lines (Switch) and Red Light (Signal).</div>
     `;
-    gameState = { signal: 'red', switch: 'top', trainMoving: false, trainX: 20 };
+}
+
+function renderLevel2() {
+    dynamicArea.innerHTML = `
+        <div class="status-text" id="game-status">LEVEL 2: COMPLEX JUNCTION.</div>
+        <div class="game-board" id="board">
+            <svg width="100%" height="100%" viewBox="0 0 600 300">
+                <!-- Track Start -->
+                <line x1="0" y1="150" x2="150" y2="150" class="track-line" />
+                
+                <!-- Split 1 -->
+                <line x1="150" y1="150" x2="500" y2="50" class="track-line" opacity="0.5" /> <!-- Top (Dead End) -->
+                <text x="510" y="55" fill="#ef4444" font-family="monospace" font-size="12">DEAD END</text>
+                
+                <line x1="150" y1="150" x2="350" y2="200" class="track-line" opacity="0.5" /> <!-- Middle -->
+
+                <!-- Split 2 (Starts at x=350, y=200) -->
+                <line x1="350" y1="200" x2="600" y2="200" class="track-line" opacity="0.5" /> <!-- Track 2 -->
+                <text x="540" y="190" fill="#555" font-family="monospace" font-size="12">TRACK 2</text>
+                
+                <line x1="350" y1="200" x2="600" y2="280" class="track-line" opacity="0.5" /> <!-- Track 3 -->
+                <text x="540" y="270" fill="#555" font-family="monospace" font-size="12">TRACK 3</text>
+
+                <!-- Switch 1 (Left) -->
+                <line id="sw1" x1="150" y1="150" x2="230" y2="130" class="switch-line" onclick="toggleSwitch(1)" />
+                
+                <!-- Switch 2 (Right) -->
+                <line id="sw2" x1="350" y1="200" x2="430" y2="200" class="switch-line" onclick="toggleSwitch(2)" />
+
+                <!-- Signal -->
+                <line x1="120" y1="120" x2="120" y2="150" stroke="#333" stroke-width="2" />
+                <circle id="sig" cx="120" cy="120" r="8" fill="#ef4444" class="signal-light" onclick="toggleSignal()" />
+
+                <!-- Train -->
+                <rect id="game-train" x="20" y="144" width="40" height="12" rx="2" fill="white" />
+            </svg>
+        </div>
+        <div class="game-controls">
+            <button class="action-btn" onclick="startTrainLvl2()">START TRAIN</button>
+            <button class="action-btn secondary" onclick="initGame()">RESET</button>
+        </div>
+    `;
 }
 
 function toggleSignal() {
     if (gameState.trainMoving) return;
-    const signalEl = document.getElementById('game-signal');
+    const sig = document.getElementById('sig');
     if (gameState.signal === 'red') {
         gameState.signal = 'green';
-        signalEl.setAttribute('fill', '#22c55e');
+        sig.setAttribute('fill', '#22c55e');
     } else {
         gameState.signal = 'red';
-        signalEl.setAttribute('fill', '#ef4444');
+        sig.setAttribute('fill', '#ef4444');
     }
 }
 
-function toggleSwitch() {
+function toggleSwitch(num) {
     if (gameState.trainMoving) return;
-    const switchEl = document.getElementById('game-switch');
-    if (gameState.switch === 'top') {
-        gameState.switch = 'bottom';
-        switchEl.setAttribute('x2', '300');
-        switchEl.setAttribute('y2', '165');
-    } else {
-        gameState.switch = 'top';
-        switchEl.setAttribute('x2', '300');
-        switchEl.setAttribute('y2', '135');
+    const sw = document.getElementById(`sw${num}`);
+    const key = `switch${num}`; // 'switch1' or 'switch2'
+
+    if (currentLevel === 1) {
+        if (gameState[key] === 'top') {
+            gameState[key] = 'bottom';
+            sw.setAttribute('x2', '300'); sw.setAttribute('y2', '165');
+        } else {
+            gameState[key] = 'top';
+            sw.setAttribute('x2', '300'); sw.setAttribute('y2', '135');
+        }
+    } 
+    else if (currentLevel === 2) {
+        if (num === 1) {
+            // Switch 1: Top (Dead End) vs Bottom (Middle Path)
+            if (gameState.switch1 === 'top') {
+                gameState.switch1 = 'bottom';
+                sw.setAttribute('x2', '230'); sw.setAttribute('y2', '170'); // Point Down
+            } else {
+                gameState.switch1 = 'top';
+                sw.setAttribute('x2', '230'); sw.setAttribute('y2', '130'); // Point Up
+            }
+        } else {
+            // Switch 2: Top (Track 2) vs Bottom (Track 3)
+            if (gameState.switch2 === 'top') {
+                gameState.switch2 = 'bottom';
+                sw.setAttribute('x2', '430'); sw.setAttribute('y2', '225'); // Point Down
+            } else {
+                gameState.switch2 = 'top';
+                sw.setAttribute('x2', '430'); sw.setAttribute('y2', '200'); // Point Straight
+            }
+        }
     }
 }
 
-function startTrain() {
+/* --- PHYSICS LEVEL 1 --- */
+function startTrainLvl1() {
     if (gameState.trainMoving) return;
     gameState.trainMoving = true;
-    const statusEl = document.getElementById('game-status');
     const trainEl = document.getElementById('game-train');
-    
-    statusEl.innerText = "TRAIN DEPARTING...";
-    statusEl.style.color = "#fbbf24";
+    const statusEl = document.getElementById('game-status');
+    statusEl.innerText = "TRAIN MOVING..."; statusEl.style.color = "#fbbf24";
 
-    let position = 20;
-    let speed = 2;
+    let pos = 20;
+    let angle = 0;
 
-    const interval = setInterval(() => {
-        position += speed;
-        let currentY = 144;
-        
-        if (position > 200) {
-            if (gameState.switch === 'top') currentY = 144 - (position - 200) * 0.12; 
-            else currentY = 144 + (position - 200) * 0.12;
-        }
-        trainEl.setAttribute('x', position);
-        trainEl.setAttribute('y', currentY);
+    gameInterval = setInterval(() => {
+        pos += 3;
+        let y = 144;
 
-        if (gameState.signal === 'red' && position > 140 && position < 150) {
-            clearInterval(interval);
-            statusEl.innerText = "ALARM: SPAD (Signal Passed at Danger)! GAME OVER.";
-            statusEl.style.color = "#ef4444";
-            trainEl.setAttribute('fill', '#ef4444');
-        }
-        if (position > 580) {
-            clearInterval(interval);
-            if(gameState.switch === 'bottom') {
-                statusEl.innerText = "SUCCESS: Train arrived safely at Track 2.";
-                statusEl.style.color = "#22c55e";
-                trainEl.setAttribute('fill', '#22c55e');
+        // Logic for Y position & Rotation
+        if (pos > 200) {
+            if (gameState.switch1 === 'top') {
+                y = 144 - (pos - 200) * 0.125; // Slope Up
+                angle = -7; // Rotate Up
             } else {
-                statusEl.innerText = "WRONG DESTINATION: Train arrived at Track 1.";
-                statusEl.style.color = "#fbbf24";
+                y = 144 + (pos - 200) * 0.125; // Slope Down
+                angle = 7; // Rotate Down
+            }
+        }
+
+        // Apply Position & Rotation
+        trainEl.setAttribute('x', pos);
+        trainEl.setAttribute('y', y);
+        // Rotate around center of train (pos + 20, y + 6)
+        trainEl.setAttribute('transform', `rotate(${angle}, ${pos + 20}, ${y + 6})`);
+
+        // Check Signal Crash
+        if (gameState.signal === 'red' && pos > 140 && pos < 150) {
+            endGame("CRASH: Signal was RED!", false);
+        }
+
+        // Check Win/Loss
+        if (pos > 580) {
+            if (gameState.switch1 === 'bottom') {
+                endGame("LEVEL 1 COMPLETE! Next level...", true);
+            } else {
+                endGame("WRONG TRACK! Train sent to Track 1.", false);
             }
         }
     }, 16);
+}
+
+/* --- PHYSICS LEVEL 2 --- */
+function startTrainLvl2() {
+    if (gameState.trainMoving) return;
+    gameState.trainMoving = true;
+    const trainEl = document.getElementById('game-train');
+    const statusEl = document.getElementById('game-status');
+    statusEl.innerText = "TRAIN MOVING..."; statusEl.style.color = "#fbbf24";
+
+    let pos = 20;
+    let angle = 0;
+
+    gameInterval = setInterval(() => {
+        pos += 3;
+        let y = 144;
+
+        // Segment 1: Start to Switch 1 (x=150)
+        if (pos < 150) {
+            y = 144;
+            angle = 0;
+        }
+        // Segment 2: After Switch 1
+        else if (pos >= 150 && pos < 350) {
+            if (gameState.switch1 === 'top') {
+                // Going to Dead End (Up)
+                y = 144 - (pos - 150) * 0.28;
+                angle = -15;
+            } else {
+                // Going to Switch 2 (Down)
+                y = 144 + (pos - 150) * 0.25;
+                angle = 14;
+            }
+        }
+        // Segment 3: After Switch 2 (x=350, y starts at ~194)
+        else if (pos >= 350) {
+            if (gameState.switch1 === 'top') {
+                // Still on dead end track
+                y = 144 - (pos - 150) * 0.28;
+            } else {
+                // We are at Switch 2
+                let startY = 144 + (200) * 0.25; // y at 350 is roughly 194
+                if (gameState.switch2 === 'top') {
+                    // Straight to Track 2
+                    y = startY; 
+                    angle = 0;
+                } else {
+                    // Down to Track 3
+                    y = startY + (pos - 350) * 0.3;
+                    angle = 16;
+                }
+            }
+        }
+
+        // Apply Updates
+        trainEl.setAttribute('x', pos);
+        trainEl.setAttribute('y', y);
+        trainEl.setAttribute('transform', `rotate(${angle}, ${pos + 20}, ${y + 6})`);
+
+        // Check Signal
+        if (gameState.signal === 'red' && pos > 80 && pos < 90) {
+            endGame("CRASH: Signal RED!", false);
+        }
+
+        // Check Crashes
+        if (pos > 500 && gameState.switch1 === 'top') {
+            endGame("CRASH: Dead End!", false);
+        }
+
+        // Check Win
+        if (pos > 580) {
+            if (gameState.switch1 === 'bottom' && gameState.switch2 === 'bottom') {
+                endGame("SUCCESS! TRACK 3 REACHED!", true);
+            } else if (gameState.switch1 === 'bottom' && gameState.switch2 === 'top') {
+                endGame("WRONG TRACK (Track 2).", false);
+            }
+        }
+    }, 16);
+}
+
+function endGame(msg, win) {
+    clearInterval(gameInterval);
+    const statusEl = document.getElementById('game-status');
+    const trainEl = document.getElementById('game-train');
+    statusEl.innerText = msg;
+    
+    if (win) {
+        statusEl.style.color = "#22c55e";
+        trainEl.setAttribute('fill', '#22c55e');
+        if (currentLevel === 1) {
+            setTimeout(() => {
+                currentLevel = 2;
+                initGame();
+            }, 2000);
+        }
+    } else {
+        statusEl.style.color = "#ef4444";
+        trainEl.setAttribute('fill', '#ef4444');
+    }
 }
