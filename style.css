@@ -105,7 +105,7 @@ body {
     align-items: center;
     background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 60%);
     padding: 20px;
-    position: relative; /* For positioning context if needed */
+    position: relative;
 }
 
 /* =============================
@@ -116,7 +116,7 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     width: 100%;
-    max-width: 700px; /* Wider for quiz buttons */
+    max-width: 700px;
     padding: 40px;
     border-radius: 20px;
     border: 1px solid var(--border);
@@ -212,7 +212,7 @@ h1 {
 /* Grid Layout for Questions */
 .quiz-options {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns */
+    grid-template-columns: 1fr 1fr;
     gap: 15px;
     margin-bottom: 25px;
 }
@@ -243,7 +243,7 @@ h1 {
 .option-btn.correct {
     background: var(--correct) !important;
     border-color: var(--correct);
-    color: #000; /* Dark text for contrast against green */
+    color: #000;
     font-weight: 600;
 }
 
@@ -254,7 +254,82 @@ h1 {
 }
 
 /* =============================
-   6. CREDITS / LOGO (BOTTOM RIGHT)
+   6. NEWS / BLOG SECTION
+   ============================= */
+
+/* Container for scrollable news */
+.news-container {
+    text-align: left;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Custom Scrollbar */
+.news-container::-webkit-scrollbar {
+    width: 6px;
+}
+.news-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+.news-container::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+/* News Card */
+.news-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+}
+
+.news-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+    transform: translateX(5px);
+}
+
+.news-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.news-tag {
+    background: var(--accent);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.news-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.news-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.news-excerpt {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+/* =============================
+   7. CREDITS / LOGO (BOTTOM RIGHT)
    ============================= */
 .credits {
     position: fixed;
@@ -263,7 +338,7 @@ h1 {
     display: flex;
     flex-direction: column; /* Stacks text on top of logo */
     align-items: flex-end;  /* Aligns everything to the right edge */
-    gap: 0px;               /* Removes gap so text sits tight on logo */
+    gap: 0px;               
     z-index: 1000;
     opacity: 0.8;
     pointer-events: none;
@@ -275,38 +350,23 @@ h1 {
 }
 
 .credits span {
-    font-size: 10px;        /* Made smaller */
+    font-size: 10px;
     color: rgba(255, 255, 255, 0.5);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-right: 2px;      /* Aligns slightly with the logo edge */
+    margin-right: 2px;
 }
 
 .credits img {
-    height: 60px;           /* Made BIGGER (was 28px) */
+    height: 60px; /* Big logo */
     width: auto;
     display: block;
     margin-top: 5px;
 }
 
-/* Mobile Adjustment */
-@media (max-width: 768px) {
-    .credits {
-        bottom: 15px;
-        right: 15px;
-    }
-    
-    .credits span {
-        font-size: 9px;
-    }
-    
-    .credits img {
-        height: 40px; /* Smaller on mobile, but still visible */
-    }
-
 /* =============================
-   7. ANIMATIONS & RESPONSIVE
+   8. ANIMATIONS & RESPONSIVE
    ============================= */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -316,7 +376,7 @@ h1 {
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column;
-        overflow-y: auto; /* Allow scroll on mobile */
+        overflow-y: auto;
     }
 
     .sidebar {
@@ -333,7 +393,6 @@ h1 {
         gap: 5px;
     }
 
-    /* Hide text labels on mobile menu, keep icons */
     .menu-btn span, 
     .logo span, 
     .footer-note {
@@ -345,20 +404,19 @@ h1 {
     }
 
     .quiz-options {
-        grid-template-columns: 1fr; /* Stack buttons vertically on mobile */
+        grid-template-columns: 1fr;
     }
 
-    /* Adjust logo position on mobile */
     .credits {
         bottom: 15px;
         right: 15px;
     }
 
     .credits span {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .credits img {
-        height: 20px;
+        height: 40px;
     }
 }
