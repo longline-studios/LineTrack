@@ -35,14 +35,14 @@ const quizData = [
     { q: "What is the highest railway line in the world?", options: ["Swiss Alps", "Qinghai-Tibet", "Rocky Mountaineer", "Andean Explorer"], correct: 1 }
 ];
 
-/* --- NEWS (Updated Dec 5-9) --- */
+/* --- NEWS (Updated) --- */
 const newsData = [
     { 
         category: "Longline Studios", 
         date: "Dec 09, 2025", 
         title: "Official LineTrack Launch", 
-        excerpt: "LineTrack is officially launched !",
-        body: "Hello everyone, we are presenting you the new website about train stuff : LineTrack.\n\nLineTrack is an entertaining site with Facts, News, Quizzes and way much more about trains in general. The news will be updated every day, and the website improved all along the next days/weeks.\n\nWe appreciate your support and our team thanks you for your visit. You can check our Discord page at anytime at https://discord.gg/HDXFZtkEDQ"
+        excerpt: "LineTrack is officially launched! Discover our new interactive platform.",
+        body: "Hello everyone, we are presenting you the new website about train stuff: LineTrack.\n\nLineTrack is an entertaining site with Facts, News, Quizzes and way much more about trains in general. The news will be updated every day, and the website improved all along the next days/weeks.\n\nWe appreciate your support and our team thanks you for your visit.\n\nYou can check our Discord page at anytime here: <a href='https://discord.gg/HDXFZtkEDQ' target='_blank' style='color:#06b6d4; text-decoration:underline;'>Join our Discord</a>"
     },
     { 
         category: "Service Launch", 
@@ -220,7 +220,6 @@ function initNews() {
 
     let htmlContent = '<div class="news-container">';
     newsData.forEach((post, index) => {
-        // We add onclick="viewArticle(index)" to make it clickable
         htmlContent += `
             <div class="news-card" onclick="viewArticle(${index})">
                 <div class="news-header"><span class="news-tag">${post.category}</span><span class="news-date">${post.date}</span></div>
@@ -233,11 +232,8 @@ function initNews() {
     dynamicArea.innerHTML = htmlContent;
 }
 
-// Function to View Single Article
 function viewArticle(index) {
     const post = newsData[index];
-    
-    // We replace the content with the full article
     dynamicArea.innerHTML = `
         <div class="article-view">
             <div class="article-meta">
