@@ -77,7 +77,26 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 #sub-title { color: var(--text-muted); font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
 
 /* =============================
-   4. ELEMENTS UI
+   4. HOME PAGE EXTRAS
+   ============================= */
+.update-banner {
+    background: rgba(6, 182, 212, 0.15); /* Cyan tint */
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 12px 20px;
+    border-radius: 50px;
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.update-banner i { margin-right: 8px; }
+
+/* =============================
+   5. ELEMENTS UI (BUTTONS)
    ============================= */
 .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
 .action-btn {
@@ -90,7 +109,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 .fact-counter { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
 /* =============================
-   5. QUIZ
+   6. QUIZ
    ============================= */
 .score-badge { background: rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--accent); font-weight: 700; margin-bottom: 20px; display: inline-block; }
 .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
@@ -100,7 +119,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 .option-btn.wrong { background: var(--wrong) !important; border-color: var(--wrong); opacity: 0.7; }
 
 /* =============================
-   6. NEWS FEED (LIST VIEW)
+   7. NEWS FEED (LIST VIEW)
    ============================= */
 .news-container { text-align: left; max-height: 400px; overflow-y: auto; padding-right: 10px; }
 .news-container::-webkit-scrollbar { width: 6px; }
@@ -111,7 +130,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
     background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border);
     border-radius: 12px; padding: 20px; margin-bottom: 20px;
     transition: transform 0.2s, background 0.2s;
-    cursor: pointer; /* Makes it look clickable */
+    cursor: pointer;
 }
 .news-card:hover {
     border-color: var(--accent); transform: translateX(5px);
@@ -125,7 +144,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 .read-more { font-size: 0.8rem; color: var(--accent); font-weight: 600; margin-top: 10px; display: inline-block; }
 
 /* =============================
-   7. NEWS ARTICLE (FULL VIEW)
+   8. NEWS ARTICLE (FULL VIEW)
    ============================= */
 .article-view { text-align: left; animation: fadeIn 0.3s ease-out; max-height: 450px; overflow-y: auto; padding-right: 10px; }
 .article-view::-webkit-scrollbar { width: 6px; }
@@ -136,7 +155,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 .article-body { font-size: 1rem; color: #d1d5db; line-height: 1.8; margin-bottom: 30px; white-space: pre-wrap; }
 
 /* =============================
-   8. GAME (SIGNAL SIM)
+   9. GAME (SIGNAL SIM)
    ============================= */
 .game-board {
     background-color: #000000; border: 2px solid #333; border-radius: 10px;
@@ -152,7 +171,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 .status-text { font-family: 'Courier New', monospace; color: #06b6d4; margin-bottom: 15px; font-weight: bold; }
 
 /* =============================
-   9. CREDITS / LOGO
+   10. CREDITS / LOGO
    ============================= */
 .credits {
     position: fixed; bottom: 25px; right: 30px;
@@ -166,7 +185,7 @@ h1 { font-size: 2.2rem; margin-bottom: 10px; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* =============================
-   10. MOBILE RESPONSIVE
+   11. MOBILE RESPONSIVE
    ============================= */
 @media (max-width: 768px) {
     .app-container { flex-direction: column; height: 100vh; overflow: hidden; }
